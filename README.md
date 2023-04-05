@@ -2,6 +2,11 @@
 
 This repository involves analysis of the OpenAI - Completion API using GPT-3.5 models, which was utilized to create a simple project based on on the insights gained.
 
+Note: 
+
+- The output varies mostly based on the model used. GPT-3.5 API exposed to the developers, the most efficient models are 'text-davinci-002' and 'text-davinci-003'. OpenAI chat produce better output as it uses 'text-davinci-002-render-sha' model which is not exposed to developers. 
+- /v1/chat/completions to check 'gpt-3.5-turbo' model (https://platform.openai.com/docs/models/model-endpoint-compatibility)
+
 ## Run the application
 
 1. Install dependencies - `npm install`

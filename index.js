@@ -1,12 +1,12 @@
 const { Configuration, OpenAIApi } = require("openai");
 const express = require('express');
-const path = require('path');
 const app = express();
 const axios = require('axios');
+require('dotenv').config();
 
 app.use(express.json());
 
-const authToken = 'xxx'
+const authToken = process.env.AUTH_TOKEN
 
 const configuration = new Configuration({
     apiKey: authToken,
@@ -15,16 +15,28 @@ const openai = new OpenAIApi(configuration);
 
 const PORT = 3000;
 
+const html = `<!DOCTYPE html>
+            <html>
+            <head>
+                <title></title>
+            </head>
+            <body>
+                <script>
+                    #replaceScript
+                </script>
+            </body>
+            </html>`
+
 app.get('/', (req, res) => {
-    res.send('You are in express app');
+    res.sendFile(__dirname + '/index.html')
 });
 
 // Following utilizes openai package
-app.post('/getCodeWithPackage', async (req, res) => {
+app.post('/getImageWithPackage', async (req, res) => {
     const parameters = {
-        "model": "text-davinci-002",
+        "model": "text-davinci-003",
         "prompt": req.body.data,
-        "temperature": 0.5,
+        "temperature": 0,
         "max_tokens": 1024,
         "top_p": 1,
         "frequency_penalty": 0,
@@ -32,13 +44,18 @@ app.post('/getCodeWithPackage', async (req, res) => {
     }
 
     const completion = await openai.createCompletion(parameters);
-    const code = completion.data.choices[0].text;
-    res.send(code);
+    const result = completion.data.choices[0].text;
+    res.setHeader('Content-Type', 'text/html');
+    res.statusCode = 200;
+
+    //Replacing for easy check in browser
+    const responseHTML = html.replace('#replaceScript', result)
+    res.send(responseHTML);
 
 });
 
 // Following utilizes https://api.openai.com/v1/completions API
-app.post('/getCodeWithAPI', async (req, res) => {
+app.post('/getImageWithAPI', async (req, res) => {
 
     const headers = {
         'Content-Type': 'application/json',
@@ -48,7 +65,7 @@ app.post('/getCodeWithAPI', async (req, res) => {
     const data = {
         model: 'text-davinci-003',
         max_tokens: 4000,
-        temperature: 0.5,
+        temperature: 0,
         prompt: req.body.data
     }
 
@@ -59,18 +76,23 @@ app.post('/getCodeWithAPI', async (req, res) => {
             const responseText = response.data.choices[0].text;
             const result = responseText.replace(/\n/g, "\n");
 
-            res.send(result);
+            res.setHeader('Content-Type', 'text/html');
+            res.statusCode = 200;
+
+            //Replacing for easy check in browser
+            const responseHTML = html.replace('#replaceScript', result)
+            res.send(responseHTML);
         }
 
     }).catch((error) => {
-        console.log(error)
+        res.status(error.response.status).send('Error');
     });
 
 });
 
 
 // Following utilizes https://api.openai.com/v1/chat/completions API
-app.post('/getCodeWithChatAPI', async (req, res) => {
+app.post('/getImageWithChatAPI', async (req, res) => {
 
     const headers = {
         'Content-Type': 'application/json',
@@ -79,7 +101,8 @@ app.post('/getCodeWithChatAPI', async (req, res) => {
 
     const data = {
         model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: req.body.data }]
+        messages: [{ role: 'user', content: req.body.data }],
+        temperature: 0,
     }
 
     axios.post('https://api.openai.com/v1/chat/completions', data, {
@@ -88,17 +111,25 @@ app.post('/getCodeWithChatAPI', async (req, res) => {
         if (response.status === 200) {
             const responseText = response.data.choices[0].message.content;
             let result = '';
-            
+
+            //Extract code
             const regex = /```([\s\S]*?)```/g;
             let match;
 
             while ((match = regex.exec(responseText)) !== null) {
                 result += match[1];
             }
-            res.send(result);
+
+            res.setHeader('Content-Type', 'text/html');
+            res.statusCode = 200;
+
+            //Replacing for easy check in browser
+            const responseHTML = html.replace('#replaceScript', result).replace('javascript', '');
+            res.send(responseHTML);
         }
     }).catch((error) => {
-        console.log(error)
+        console.log(error.response)
+        res.status(error.response.status).send('Error');
     });
 
 });

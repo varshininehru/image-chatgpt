@@ -1,15 +1,198 @@
-# Toy Project
+# Toy Project - Analysis 
+
+This repository involves analysis of the OpenAI - Completion API using GPT-3.5 models, which was utilized to create a simple project based on on the insights gained.
 
 ## Run the application
 
 1. Install dependencies - `npm install`
 2. Run the server - `npm start`
-3. Launch http://localhost:3000/
- 
+3. Replace 'xxx' in .env file with your authToken 
+4. Launch http://localhost:3000/
 
-## API Reference
+## Postman collection
 
-API - https://api.openai.com/v1/completions
+`{
+	"info": {
+		"_postman_id": "cd32ad27-9be4-4b17-81f6-b644fee3a6a1",
+		"name": "Open AI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "OpenAI Endpoint",
+			"item": [
+				{
+					"name": "https://api.openai.com/v1/completions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{openai_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"model\": \"text-davinci-002\",\n    \"prompt\": \"write javascript code on canvas to produce duck in water\",\n    \"temperature\": 0.5,\n    \"max_tokens\": 1024,\n    \"top_p\": 1,\n    \"frequency_penalty\": 0,\n    \"presence_penalty\": 0\n  }"
+						},
+						"url": {
+							"raw": "https://api.openai.com/v1/completions",
+							"protocol": "https",
+							"host": [
+								"api",
+								"openai",
+								"com"
+							],
+							"path": [
+								"v1",
+								"completions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "https://api.openai.com/v1/chat/completions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{openai_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"model\": \"gpt-3.5-turbo\",\n    \"messages\": [{\"role\": \"user\", \"content\": \"write javascript code on canvas to produce duck in water\"}]\n  }"
+						},
+						"url": {
+							"raw": "https://api.openai.com/v1/chat/completions",
+							"protocol": "https",
+							"host": [
+								"api",
+								"openai",
+								"com"
+							],
+							"path": [
+								"v1",
+								"chat",
+								"completions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Local Endpoint",
+			"item": [
+				{
+					"name": "localhost:3000/getImageWithAPI",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": \"write javascript code on canvas to produce duck in water\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/getImageWithAPI",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"getImageWithAPI"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:3000/getImageWithChatAPI",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": \"write javascript code on canvas to produce duck in water\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/getImageWithChatAPI",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"getImageWithChatAPI"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "localhost:3000/getImageWithPackage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": \"write javascript code on canvas to produce duck in water\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/getImageWithPackage",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"getImageWithPackage"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}`
+
+## OpenAI Completion API Request/Response
+
+Reference : 
+
+1. https://platform.openai.com/docs/api-reference/completions
+
+2. https://platform.openai.com/docs/api-reference/chat/create
+
+3. https://platform.openai.com/docs/api-reference/authentication
+
+
+### API - https://api.openai.com/v1/completions
 
 `curl --location 'https://api.openai.com/v1/completions' \
 --header 'Content-Type: application/json' \
@@ -74,6 +257,8 @@ Response
 
 
 ### API - https://api.openai.com/v1/chat/completions
+
+Note: The response for this takes a longer time
 
 `curl --location 'https://api.openai.com/v1/chat/completions' \
 --header 'Content-Type: application/json' \

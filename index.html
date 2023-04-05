@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>OpenAI Toy Project</title>
+    <style>
+        .topnav {
+            overflow: hidden;
+            background-color: #333;
+            color: white;
+            text-align: left;
+            padding: 20px;
+            text-transform: uppercase;
+            font-family: Bahnschrift;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topnav">
+        OpenAI Toy Project
+    </div>
+    <div>
+        <textarea id="prompt" name="prompt" rows="4" cols="50"></textarea>
+        <button type="button" onclick="onSubmit()">Submit</button>
+        <div id="api-response"> </div>
+    </div>
+
+    <script>
+        async function onSubmit() {
+
+            var requestBody = {
+                data: document.getElementById("prompt").value
+            };
+
+            fetch('/getImageWithPackage', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            }).then(function (response) {
+                // The API call was successful!
+                return response.text();
+            }).then(function (html) {
+
+                document.getElementById('api-response').innerHTML = html;
+
+                // Execute scripts in the HTML response
+                const scripts = document.getElementById('api-response').getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    eval(scripts[i].innerHTML);
+                }
+
+            }).catch(function (err) {
+                // There was an error
+                console.warn('Something went wrong.', err);
+            });
+        }
+    </script>
+</body>
+
+</html>
